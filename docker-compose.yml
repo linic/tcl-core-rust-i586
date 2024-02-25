@@ -1,0 +1,7 @@
+services:
+  main:
+    image: linichotmailca/tcl-core-rust-i586:${RUST_SIMPLE_VERSION:-latest}
+    build:
+      context: .
+      dockerfile: Dockerfile
+
