@@ -6,7 +6,7 @@ FROM linichotmailca/openssl-i586:3.0.0 AS openssl_resource
 # Defining the image to use to create the final one.
 FROM linichotmailca/tcl-core-x86:14.x-x86 AS final
 # Defining arguments from which environment variables will be generated.
-ARG RUST_VERSION=1.82.0-i586
+ARG RUST_VERSION=1.83.0-i586
 ARG OPENSSL_LIB_SUFFIX=3
 ARG OPENSSL_VERSION=3.0.0
 ARG TCL_VERSION=15.x-x86
