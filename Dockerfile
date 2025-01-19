@@ -1,15 +1,23 @@
 # To be able to read all the commands outputs as they get executed:
 # sudo docker compose --progress-plain -f docker-compose.yml build
 # Reusing images from existing repositories as resource images.
+ARG ARCHITECTURE
+ARG TCL_VERSION_NUMBER
 FROM linichotmailca/rust-i586:latest AS rust_resource
+ARG ARCHITECTURE
+ARG TCL_VERSION_NUMBER
 FROM linichotmailca/openssl-i586:3.0.0 AS openssl_resource
 # Defining the image to use to create the final one.
-FROM linichotmailca/tcl-core-x86:14.x-x86 AS final
+ARG ARCHITECTURE
+ARG TCL_VERSION_NUMBER
+FROM linichotmailca/tcl-core-x86:$TCL_VERSION_NUMBER-$ARCHITECTURE AS final
 # Defining arguments from which environment variables will be generated.
-ARG RUST_VERSION=1.83.0-i586
+ARG ARCHITECTURE
 ARG OPENSSL_LIB_SUFFIX=3
 ARG OPENSSL_VERSION=3.0.0
-ARG TCL_VERSION=15.x-x86
+ARG RUST_VERSION
+ARG TCL_VERSION_NUMBER
+ARG TCL_VERSION=$TCL_VERSION_NUMBER-$ARCHITECTURE
 # Defining all environment variables.
 ENV RUST_TOOLCHAIN_NAME=rust-nightly-i586-unknown-linux-gnu
 ENV RUST_TOOLCHAIN_TAR=$RUST_TOOLCHAIN_NAME.tar.gz
