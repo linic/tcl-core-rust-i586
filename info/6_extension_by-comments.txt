@@ -1,0 +1,17 @@
+Extension_by:   linic@hotmail.ca
+Tags:           rust compiler toolchain
+Comments:       Runs successfully on i686 CPUs and tested on the ThinkPad 560z.
+                Builds programs which run on i686 CPUs and tested on the ThinkPad 560z.
+                ----------
+                This extension contains:
+                rust toolchain - Apache 2.0/MIT - https://github.com/rust-lang/rust/
+                Built by linic@hotmail.ca using the method described in these URLs: 
+                  http://facedebouc.sbs/tiny_core_linux/tcl-core-rust-i586.html
+                  https://github.com/linic/tcl-core-rust-i586
+                  https://github.com/linic/rust-i586
+                This extension has a .tcz.dep
+                About versioning, each rust-x.y.z-i586.tcz is the first version, but
+                it lists in the Change-log all the previous versions that were built
+                using the method described in the previous urls.
+                There is also a rust-i586.tcz which serves as the latest.
+                ----------
