@@ -5,11 +5,11 @@ services:
       args:
         - ARCHITECTURE=x86
         - OPENSSL_LIB_SUFFIX=3
-        - OPENSSL_VERSION=3.0.0
-        - RUST_VERSION=1.85.0
+        - OPENSSL_VERSION=3.2.0
+        - RUST_VERSION=1.86.0
         - TCL_VERSION=16.x
       dockerfile: Dockerfile
       tags:
-        - linichotmailca/tcl-core-rust-i586:1.85.0
+        - linichotmailca/tcl-core-rust-i586:1.86.0
         - linichotmailca/tcl-core-rust-i586:latest
 

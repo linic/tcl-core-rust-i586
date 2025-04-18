@@ -122,33 +122,28 @@ if mksquashfs $OPENSSL_SQUASHFS_SOURCE_PATH ./$OPENSSL_TCZ; then
   echo "./openssl-$OPENSSL_VERSION-i586.tcz generated successfully."
   md5sum ./$OPENSSL_TCZ > ./$OPENSSL_TCZ.md5.txt
   if ! grep -q "$OPENSSL_VERSION" $RESOURCE_FILES_DIRECTORY/info-openssl/1_title.txt; then
-    echo  "Title:          openssl-$OPENSSL_VERSION-i586-openssl.tcz\n"\
-          > $RESOURCE_FILES_DIRECTORY/info-openssl/1_title.txt
-    echo  "Version:        $OPENSSL_VERSION\n"\
-          > $RESOURCE_FILES_DIRECTORY/info-openssl/2_version.txt
-    echo  "Size:           `du -h ./$OPENSSL_TCZ | cut -f1`"\
-          > $RESOURCE_FILES_DIRECTORY/info-openssl/5_size.txt
-    echo  "Extension_by:   linic@hotmail.ca\n"\
-          "Tags:           cryptography tls ssl dev\n"\
-          "Comments:       Runs successfully on i686 CPUs and tested on the ThinkPad 560z.\n"\
-          "                Required by rust toolchain.\n"\
-          "                ----------\n"\
-          "                This extension contains:\n"\
-          "                  libssl.so.$OPENSSL_LIB_SUFFIX\n"\
-          "                  libcrypto.so.$OPENSSL_LIB_SUFFIX\n"\
-          "                from openssl - Apache 2.0 - https://www.openssl.org/\n"\
-          "                This is the minimum used by rust.\n"\
-          "                Built by linic@hotmail.ca using the method described in these URLs: \n"\
-          "                  https://github.com/linic/tcl-core-rust-i586\n"\
-          "                  https://github.com/linic/openssl-i586\n"\
-          "                ----------\n"\
-          > $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "Title:          openssl-$OPENSSL_VERSION-i586-openssl.tcz" > $RESOURCE_FILES_DIRECTORY/info-openssl/1_title.txt
+    echo "Version:        $OPENSSL_VERSION" > $RESOURCE_FILES_DIRECTORY/info-openssl/3_version.txt
+    echo "Size:           `du -h ./$OPENSSL_TCZ | cut -f1`" > $RESOURCE_FILES_DIRECTORY/info-openssl/5_size.txt
+    echo "Extension_by:   linic@hotmail.ca" > $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "Tags:           cryptography tls ssl dev" >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "Comments:       Runs successfully on i686 CPUs and tested on the ThinkPad 560z." >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "                Required by rust toolchain." >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "                ----------" >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "                This extension contains:" >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "                  libssl.so.$OPENSSL_LIB_SUFFIX" >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "                  libcrypto.so.$OPENSSL_LIB_SUFFIX" >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "                from openssl - Apache 2.0 - https://www.openssl.org/" >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "                This is the minimum used by rust." >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "                Built by linic@hotmail.ca using the method described in these URLs: " >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "                  https://github.com/linic/tcl-core-rust-i586" >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "                  https://github.com/linic/openssl-i586" >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
+    echo "                ----------" >> $RESOURCE_FILES_DIRECTORY/info-openssl/6_extension_by-comments.txt
     PREVIOUS_VERSION=`cat $RESOURCE_FILES_DIRECTORY/info-openssl/8.3_current.txt`
     PREVIOUS_UPDATED=`cat $RESOURCE_FILES_DIRECTORY/info-openssl/8.2_current.txt`
     echo $OPENSSL_VERSION > $RESOURCE_FILES_DIRECTORY/info-openssl/8.3_current.txt
     echo "$TODAY updated $PREVIOUS_VERSION -> " > $RESOURCE_FILES_DIRECTORY/info-openssl/8.2_current.txt
-    echo  "                $PREVIOUS_UPDATED$PREVIOUS_VERSION\n"\
-          >> $RESOURCE_FILES_DIRECTORY/info-openssl/7_change-log.txt
+    echo "                $PREVIOUS_UPDATED$PREVIOUS_VERSION" >> $RESOURCE_FILES_DIRECTORY/info-openssl/7_change-log.txt
   fi
 else
   echo "$OPENSSL_TCZ - mksquashfs failed!"

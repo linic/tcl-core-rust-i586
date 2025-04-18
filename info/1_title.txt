@@ -1,1 +1,1 @@
-Title:          rust-1.85.0-i586.tcz
+Title:          rust-1.86.0-i586.tcz

@@ -17,9 +17,6 @@ if [ ! $# -ge 2 ]; then
 fi
 RUST_VERSION=$1
 OPENSSL_VERSION=$2
-# Optional parameter to force the copy on the remote server when
-# files should already exist.
-FORCE_COPY=$3
 
 OPENSSL_TCZ=openssl-$OPENSSL_VERSION-i586.tcz
 RUST_RELEASE_NAME=rust-$RUST_VERSION-i586
@@ -206,18 +203,8 @@ if [ -f ../../configuration/ssh_user ] && [ -f ../../configuration/ssh_remote_ho
 
   echo "$SSH_USER $SSH_REMOTE_HOST $SSH_REMOTE_DIRECTORY"
 
-  if ssh $SSH_USER@$SSH_REMOTE_HOST "[ -f $SSH_REMOTE_DIRECTORY/$RUST_TCZ ]" && [ -z "$FORCE_COPY" ]; then
-    echo "Skipping $RUST_TCZ and companions since it exists on the remote server."
-  else
-    scp rust-$RUST_VERSION* $SSH_USER@$SSH_REMOTE_HOST:$SSH_REMOTE_DIRECTORY/
-  fi
-
-  if ssh $SSH_USER@$SSH_REMOTE_HOST "[ -f $SSH_REMOTE_DIRECTORY/$OPENSSL_TCZ ]" && [ -z "$FORCE_COPY" ]; then
-    echo "Skipping $OPENSSL_TCZ and companions since it exists on the remote server."
-  else
-    scp openssl-$OPENSSL_VERSION* $SSH_USER@$SSH_REMOTE_HOST:$SSH_REMOTE_DIRECTORY/
-  fi
-
+  scp rust-$RUST_VERSION* $SSH_USER@$SSH_REMOTE_HOST:$SSH_REMOTE_DIRECTORY/
+  scp openssl-$OPENSSL_VERSION* $SSH_USER@$SSH_REMOTE_HOST:$SSH_REMOTE_DIRECTORY/
   scp rust-i586-doc.tcz.* $SSH_USER@$SSH_REMOTE_HOST:$SSH_REMOTE_DIRECTORY/
   scp rust-i586.tcz.* $SSH_USER@$SSH_REMOTE_HOST:$SSH_REMOTE_DIRECTORY/
   scp openssl-i586.tcz.* $SSH_USER@$SSH_REMOTE_HOST:$SSH_REMOTE_DIRECTORY/

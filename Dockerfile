@@ -12,7 +12,7 @@ ARG OPENSSL_LIB_SUFFIX
 ARG OPENSSL_VERSION
 ARG RUST_VERSION
 ARG TCL_VERSION
-FROM linichotmailca/openssl-i586:3.0.0 AS openssl_resource
+FROM linichotmailca/openssl-i586:$OPENSSL_VERSION AS openssl_resource
 # Defining the image to use to create the final one.
 ARG ARCHITECTURE
 ARG OPENSSL_LIB_SUFFIX
@@ -29,9 +29,9 @@ ARG TCL_VERSION
 # Defining all environment variables.
 ENV RUST_TOOLCHAIN_NAME=rust-nightly-i586-unknown-linux-gnu
 ENV RUST_TOOLCHAIN_TAR=$RUST_TOOLCHAIN_NAME.tar.gz
-ENV RUST_TOOLCHAIN_TAR_PATH=/rust/build/dist/$RUST_TOOLCHAIN_TAR
+ENV RUST_TOOLCHAIN_TAR_PATH=/home/tc/rust/build/dist/$RUST_TOOLCHAIN_TAR
 ENV HOME_TC=/home/tc
-ENV OPENSSL_SOURCE_PATH=/openssl-$OPENSSL_VERSION
+ENV OPENSSL_SOURCE_PATH=/home/tc/openssl-$OPENSSL_VERSION
 ENV OPENSSL_SQUASHFS_SOURCE_PATH=$HOME_TC/openssl
 ENV OPENSSL_LIB_PATH=$OPENSSL_SQUASHFS_SOURCE_PATH/usr/lib
 # Copying data from resouce images.
@@ -54,6 +54,6 @@ COPY --chown=tc:staff ./tools/load-test.sh ./tools/load-test.sh
 RUN ./tools/load-test.sh
 # Then if you docker compose build you'll be able to docker exec -it into it and move around or
 # docker cp files out of it.
-COPY echo_sleep /
-ENTRYPOINT ["/bin/sh", "/echo_sleep"]
+COPY --chown=tc:staff tools/echo_sleep.sh /home/tc/tools/echo_sleep.sh
+ENTRYPOINT ["/bin/sh", "/home/tc/tools/echo_sleep.sh"]
 

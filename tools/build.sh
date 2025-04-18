@@ -13,7 +13,7 @@
 # in a release/$RUST_VERSION directory (for example release/1.85.0/).
 ##################################################################
 
-PARAMETER_ERROR_MESSAGE="ARCHITECTURE OPENSSL_VERSION RUST_VERSION TCL_VERSION for example: ./build.sh x86 3.0.0 1.85.0 16.x"
+PARAMETER_ERROR_MESSAGE="ARCHITECTURE OPENSSL_VERSION RUST_VERSION TCL_VERSION are required for example: ./build.sh x86 3.0.0 1.85.0 16.x"
 if [ ! $# -eq 4 ]; then
   echo $PARAMETER_ERROR_MESSAGE
   exit 1
@@ -47,7 +47,7 @@ if [ ! echo_sleep ]; then
     "echo_sleep is required"
   exit 3
 fi
-if [ ! -f docker-compose.yml ] || ! grep -q "$RUST_VERSION" docker-compose.yml || ! grep -q "$TCL_VERSION" docker-compose.yml; then
+if [ ! -f docker-compose.yml ] || ! grep -q "$RUST_VERSION" docker-compose.yml || ! grep -q "$TCL_VERSION" docker-compose.yml || ! grep -q "$OPENSSL_VERSION" docker-compose.yml; then
   echo "Did not find $RUST_VERSION or $TCL_VERSION in docker-compose.yml. Rewriting docker-compose.yml."
   echo "services:\n"\
     " main:\n"\
@@ -185,8 +185,8 @@ if [ -f ./rust-i586.tcz.dep ]; then
 fi
 ln ./$RUST_TCZ.dep ./rust-i586.tcz.dep
 
-if [ -f ./rust-i586-doc.tcz.dep ]; then
-  rm ./rust-i586-doc.tcz.dep
+if [ -f ./rust-i586-doc.tcz ]; then
+  rm ./rust-i586-doc.tcz
 fi
 ln ./$RUST_DOC_TCZ ./rust-i586-doc.tcz
 
