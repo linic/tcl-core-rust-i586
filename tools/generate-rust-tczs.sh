@@ -11,13 +11,14 @@
 ##################################################################
 
 HOME_TC=/home/tc
-RUST_TOOLCHAIN_NAME=rust-nightly-i586-unknown-linux-gnu
 PARAMETER_ERROR_MESSAGE="RUST_VERSION is required. For example: ./generate-rust-tczs.sh 1.85.0"
 if [ ! $# -eq 1 ]; then
   echo $PARAMETER_ERROR_MESSAGE
   exit 1
 fi
 RUST_VERSION=$1
+# Starting with 1.88.0, "nightly" was replaced with the rust version.
+RUST_TOOLCHAIN_NAME=rust-$RUST_VERSION-i586-unknown-linux-gnu
 RUST_RELEASE_NAME=rust-$RUST_VERSION-i586
 RUST_TCZ=$RUST_RELEASE_NAME.tcz
 RUST_DOC_TCZ=$RUST_RELEASE_NAME-doc.tcz

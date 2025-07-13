@@ -27,7 +27,7 @@ ARG OPENSSL_VERSION
 ARG RUST_VERSION
 ARG TCL_VERSION
 # Defining all environment variables.
-ENV RUST_TOOLCHAIN_NAME=rust-nightly-i586-unknown-linux-gnu
+ENV RUST_TOOLCHAIN_NAME=rust-$RUST_VERSION-i586-unknown-linux-gnu
 ENV RUST_TOOLCHAIN_TAR=$RUST_TOOLCHAIN_NAME.tar.gz
 ENV RUST_TOOLCHAIN_TAR_PATH=/home/tc/rust/build/dist/$RUST_TOOLCHAIN_TAR
 ENV HOME_TC=/home/tc
