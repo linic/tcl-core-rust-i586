@@ -2,8 +2,10 @@
 
 ARCHITECTURE=x86
 OPENSSL_VERSION=3.2.0
-RUST_VERSION=1.92.0
-TCL_VERSION=16.x
+RUST_VERSION=1.93.0
+TCL_VERSION=17.x
+
+.PHONY: all build publish
 
 all: build publish
 
