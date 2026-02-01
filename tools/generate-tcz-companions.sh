@@ -326,6 +326,12 @@ echo "rust-i586.tcz" > rust-i586-doc.tcz.dep
 
 ln ./$RUST_TCZ.dep ./rust-i586.tcz.dep
 md5sum ./rust-i586.tcz > ./rust-i586.tcz.md5.txt
+sha1sum ./rust-i586.tcz > ./rust-i586.tcz.sha1.txt
+sha256sum ./rust-i586.tcz > ./rust-i586.tcz.sha256.txt
+sha512sum ./rust-i586.tcz > ./rust-i586.tcz.sha512.txt
 
 md5sum ./rust-i586.tcz > ./rust-i586-doc.tcz.md5.txt
+sha1sum ./rust-i586.tcz > ./rust-i586.tcz.sha1.txt
+sha256sum ./rust-i586.tcz > ./rust-i586.tcz.sha256.txt
+sha512sum ./rust-i586.tcz > ./rust-i586.tcz.sha512.txt
 
