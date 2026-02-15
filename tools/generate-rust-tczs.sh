@@ -1,14 +1,14 @@
 #!/bin/sh
 
-###################################################################
-# Copyright (C) 2025  linic@hotmail.ca Subject to GPL-3.0 license.#
-# https://github.com/linic/tcl-core-rust-i586                     #
-###################################################################
+#############################################################
+# Copyright (C) 2026 linic@hotmail.ca under GPL-3.0 license.#
+# https://github.com/linic/tcl-core-rust-i586               #
+#############################################################
 
-##################################################################
-# The script generates the 
-# rust-x.y.z-i586.tcz and rust-x.y.z-i586-doc.tcz from a tar.
-##################################################################
+#############################################################
+# The script generates the rust-x.y.z-i586.tcz and          #
+# rust-x.y.z-i586-doc.tcz from a tar.                       #
+#############################################################
 
 HOME_TC=/home/tc
 PARAMETER_ERROR_MESSAGE="RUST_VERSION is required. For example: ./generate-rust-tczs.sh 1.85.0"
