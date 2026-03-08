@@ -40,6 +40,7 @@ COPY --from=openssl_resource $OPENSSL_SOURCE_PATH/libcrypto.so.$OPENSSL_LIB_SUFF
 COPY --from=rust_resource $RUST_TOOLCHAIN_TAR_PATH $HOME_TC
 # Generating and loading the .tcz files for openssl and rust.
 WORKDIR $HOME_TC
+RUN tce-load -wi coreutils.tcz
 COPY --chown=tc:staff rust.tcz.dep ./
 COPY --chown=tc:staff ./info ./info
 COPY --chown=tc:staff ./info-doc ./info-doc
