@@ -82,7 +82,7 @@ compile_openssl_tcz()
   mkdir -pv "$OPENSSL_TCZ_RELEASE_PATH"
   cp -rv "$GIT_REPO_DIR/info-openssl" "$OPENSSL_TCZ_COMPILE_DIR"
   cp -rv "$GIT_REPO_DIR/tools/generate-openssl-tcz.sh" "$OPENSSL_TCZ_COMPILE_DIR"
-  cd "$OPENSSL_COMPILE_DIR"
+  cd "$OPENSSL_TCZ_COMPILE_DIR"
   ./generate-openssl-tcz.sh "$OPENSSL_VERSION"
   return $?
 }
@@ -93,39 +93,42 @@ compile_rust_tcz()
   RUST_TCZ="$RUST_RELEASE_NAME.tcz"
   RUST_DOC_TCZ="$RUST_RELEASE_NAME-doc.tcz"
   RUST_TCZ_COMPILE_DIR="$HOME_TC/rust-$RUST_VERSION-i586_tcz"
-  RUST_TOOLCHAIN_TAR_PATH="$RUST_DEPENDENCY_PATH/$RUST_TOOLCHOAIN_TAR"
+  RUST_TOOLCHAIN_TAR_PATH="$RUST_DEPENDENCY_PATH/$RUST_TOOLCHAIN_TAR"
   RUST_TCZ_RELEASE_PATH="$RUST_TCZ_COMPILE_DIR-release"
   mkdir -pv "$RUST_TCZ_COMPILE_DIR"
   mkdir -pv "$RUST_TCZ_RELEASE_PATH"
   cp -rv "$GIT_REPO_DIR/info" "$RUST_TCZ_COMPILE_DIR"
   cp -rv "$GIT_REPO_DIR/tools/generate-rust-tczs.sh" "$RUST_TCZ_COMPILE_DIR"
   cp -rv "$GIT_REPO_DIR/tools/generate-tcz-companions.sh" "$RUST_TCZ_COMPILE_DIR"
-  cd "$RUST_COMPILE_DIR"
-  CONTINUER ICI A VERIFIER LES RESULTATS
+  cd "$RUST_TCZ_COMPILE_DIR"
   ./generate-rust-tczs.sh "$RUST_VERSION"
+  RESULT=$?
+  if [ $RESULT != 0 ]; then
+    return $RESULT
+  fi
   ./generate-tcz-companions.sh "$RUST_VERSION"
   return $?
 }
 
 clone()
 {
-  sudo mkdir -pv "$GIT_REPO_PATH"
-  sudo chown tc:staff "$GIT_REPO_PATH"
+  sudo mkdir -pv "$GIT_REPO_DIR"
+  sudo chown tc:staff "$GIT_REPO_DIR"
   RESULT=$?
   if [ $RESULT != 0 ]; then
-    echo "Failed to create $GIT_REPO_PATH"
+    echo "Failed to create $GIT_REPO_DIR"
     return $RESULT
   fi
-  cd "$GIT_REPO_PATH"
+  cd "$GIT_REPO_DIR"
   git clone git@github.com:linic/tcl-core-rust-i586.git .
   RESULT=$?
   if [ $RESULT != 0 ]; then
-    echo "Failed git clone using ssh $GIT_REPO_PATH. Trying https..."
-  fi
-  git clone https://github.com/linic/tcl-core-rust-i586.git .
-  RESULT=$?
-  if [ $RESULT != 0 ]; then
-    echo "Failed git clone using https $GIT_REPO_PATH. No more tries."
+    echo "Failed git clone using ssh $GIT_REPO_DIR. Trying https..."
+    git clone https://github.com/linic/tcl-core-rust-i586.git .
+    RESULT=$?
+    if [ $RESULT != 0 ]; then
+      echo "Failed git clone using https $GIT_REPO_DIR. No more tries."
+    fi
   fi
 
   return $RESULT
@@ -133,8 +136,8 @@ clone()
 
 ensure_git_repo()
 {
-  if [ ! -d "$GIT_REPO_PATH" ]; then
-    echo "$GIT_REPO_PATH does not exist."
+  if [ ! -d "$GIT_REPO_DIR" ]; then
+    echo "$GIT_REPO_DIR does not exist."
     echo "mkdir and clone ? [y/N]"
     read -r ANSWER
 
@@ -150,15 +153,15 @@ ensure_git_repo()
 
 main()
 {
-  if [ ! $# -eq 1 ]; then
-    echo $PARAMETER_ERROR_MESSAGE
+  if [ ! $# -eq 2 ]; then
+    usage
     exit $?
   fi
 
   OPENSSL_VERSION="$1"
   RUST_VERSION="$2"
   HOME_TC="/home/tc"
-  GIT_REPO_PATH="/home/code/tcl-core-rust-i586"
+  GIT_REPO_DIR="/home/code/tcl-core-rust-i586"
 
   ensure_git_repo
   RESULT=$?
@@ -192,3 +195,5 @@ main()
 
   return 0
 }
+
+main "$@"

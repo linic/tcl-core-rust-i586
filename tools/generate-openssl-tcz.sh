@@ -18,6 +18,7 @@ usage()
   echo "OPENSSL_VERSION is required."
   echo "For example:"
   echo "./generate-openssl-tcz.sh 3.0.0"
+  return 2
 }
 
 compile()
@@ -110,7 +111,6 @@ main()
   OPENSSL_VERSION_TCZ_PATH="$OPENSSL_TCZ_RELEASE_PATH/$OPENSSL_VERSION_TCZ"
   OPENSSL_LATEST_TCZ_PATH="$OPENSSL_TCZ_RELEASE_PATH/$OPENSSL_LATEST_TCZ"
   TODAY=`date "+%Y/%m/%d"`
-  cd "$OPENSSL_COMPILE_DIR"
   compile
   RESULT=$?
   if [ $RESULT != 0 ]; then
@@ -120,4 +120,4 @@ main()
   exit $RESULT
 }
 
-main "$A"
+main "$@"

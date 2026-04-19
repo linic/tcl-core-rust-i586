@@ -16,6 +16,7 @@ usage()
   echo "RUST_VERSION is required."
   echo "For example:"
   echo "./generate-tcz-companions.sh 1.94.0"
+  return 2
 }
 
 compile()
@@ -157,5 +158,9 @@ main()
   RUST_VERSION=$1
   RUST_TCZ=rust-$RUST_VERSION-i586.tcz
   RUST_DOC_TCZ=rust-$RUST_VERSION-i586-doc.tcz
+  RESOURCE_FILES_DIRECTORY="${RESOURCE_FILES_DIRECTORY:-.}"
+  compile
   exit $?
 }
+
+main "$@"

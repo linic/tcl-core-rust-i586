@@ -67,18 +67,20 @@ Ordered lowest-risk first.
 
 ### Phase 1 — fix the obvious bugs (quick, safe)
 
-- [ ] Write this journal and commit it.
-- [ ] `build-locally.sh`: remove the `CONTINUER ICI ...` sentinel.
-- [ ] `build-locally.sh`: fix `OPENSSL_COMPILE_DIR` → `OPENSSL_TCZ_COMPILE_DIR`; fix `RUST_COMPILE_DIR` → `RUST_TCZ_COMPILE_DIR`.
-- [ ] `build-locally.sh`: fix `RUST_TOOLCHOAIN_TAR` → `RUST_TOOLCHAIN_TAR`.
-- [ ] `build-locally.sh`: arg count check `-eq 2`; replace `echo $PARAMETER_ERROR_MESSAGE; exit $?` with `usage; exit $?`.
-- [ ] `build-locally.sh`: unify `GIT_REPO_PATH` / `GIT_REPO_DIR`.
-- [ ] `build-locally.sh`: fix `clone()` so https is tried only when ssh actually failed.
-- [ ] `build-locally.sh`: add `main "$@"` at end.
-- [ ] `generate-rust-tczs.sh`: fix `$RUST_TOOLCHOAIN_TAR` typo; have `main` call `compile`.
-- [ ] `generate-openssl-tcz.sh`: fix `main "$A"` → `main "$@"`; remove/fix the `cd "$OPENSSL_COMPILE_DIR"` line.
-- [ ] `generate-tcz-companions.sh`: have `main` call `compile`; add `main "$@"`.
-- [ ] Commit Phase 1.
+- [x] Write this journal and commit it.
+- [x] `build-locally.sh`: remove the `CONTINUER ICI ...` sentinel.
+- [x] `build-locally.sh`: fix `OPENSSL_COMPILE_DIR` → `OPENSSL_TCZ_COMPILE_DIR`; fix `RUST_COMPILE_DIR` → `RUST_TCZ_COMPILE_DIR`.
+- [x] `build-locally.sh`: fix `RUST_TOOLCHOAIN_TAR` → `RUST_TOOLCHAIN_TAR`.
+- [x] `build-locally.sh`: arg count check `-eq 2`; replace `echo $PARAMETER_ERROR_MESSAGE; exit $?` with `usage; exit $?`.
+- [x] `build-locally.sh`: unify `GIT_REPO_PATH` → `GIT_REPO_DIR` (matches the `_DIR` used by the two compile helpers).
+- [x] `build-locally.sh`: fix `clone()` so https is tried only when ssh actually failed (nested the https block inside the ssh-failure branch).
+- [x] `build-locally.sh`: add `main "$@"` at end.
+- [x] `build-locally.sh`: check generate-rust-tczs.sh result before running generate-tcz-companions.sh (was silently chained without checking).
+- [x] `generate-rust-tczs.sh`: fix `$RUST_TOOLCHOAIN_TAR` typo; have `main` call `compile`; add `main "$@"`.
+- [x] `generate-openssl-tcz.sh`: fix `main "$A"` → `main "$@"`; dropped the `cd "$OPENSSL_COMPILE_DIR"` line (undefined var; `compile()` uses absolute paths throughout).
+- [x] `generate-openssl-tcz.sh`, `generate-tcz-companions.sh`: `usage()` now `return 2` instead of implicit 0, matching `generate-rust-tczs.sh`.
+- [x] `generate-tcz-companions.sh`: have `main` call `compile`; add `main "$@"`; default `RESOURCE_FILES_DIRECTORY=.` so the info/info-doc/rust.tcz.dep lookups resolve relative to cwd (matches Docker's `WORKDIR /home/tc`).
+- [x] Commit Phase 1.
 
 ### Phase 2 — wire up a local build dependency installer (medium, safe)
 
@@ -102,6 +104,7 @@ Ordered lowest-risk first.
 ## Log (what I completed, in order)
 
 - `2026-04-18` — Wrote this journal, read the four files in the commit and the reference `rust-i586/tools/build-locally.sh`, listed the bugs, set up the phased plan. No code changes yet; this is the handshake commit.
+- `2026-04-18` — Phase 1: fixed the 17-ish bugs from the journal. `build-locally.sh` now parses args correctly, uses the right variable names, has a working `clone()` fallback, and ends with `main "$@"`. All three `generate-*.sh` scripts now actually invoke their `compile()` function (they were no-ops before). Usage paths all exit 2 consistently. Smoke-tested with 0/1/3 args on `build-locally.sh` and bad-input on each `generate-*.sh` — all print usage and exit 2. `sh -n` passes on all four files.
 
 ---
 
@@ -138,6 +141,13 @@ rust-i586's `build-locally.sh` calls `get-certificate.sh / compare-certificate.s
 ## Decisions made without input (record of assumptions)
 
 *(Appended as I go. All of these are reversible via `git revert` of the relevant phase commit.)*
+
+**Phase 1**
+
+- **Variable rename direction** (`GIT_REPO_PATH` → `GIT_REPO_DIR`, not the other way): picked `_DIR` because the compile helpers already used it and because `rust-i586/tools/build-locally.sh` uses `COMPILE_DIR` / `RUST_GIT_DIR` — consistent naming. Reversible.
+- **Dropped the `cd "$OPENSSL_COMPILE_DIR"` line** in `generate-openssl-tcz.sh` `main()` rather than renaming it to `$OPENSSL_TCZ_COMPILE_DIR`. `compile()` uses absolute paths (`$OPENSSL_VERSION_TCZ_PATH`, `$OPENSSL_INFO_FILES_PATH`) so cwd doesn't matter. Deleting is the smaller change. Reversible via `git revert`.
+- **`RESOURCE_FILES_DIRECTORY="${RESOURCE_FILES_DIRECTORY:-.}"` default** in `generate-tcz-companions.sh` `main()`: the script was never setting this, relying on the Dockerfile's implicit `WORKDIR /home/tc` + the fact that `.` resolves relative to cwd. Making it an explicit default (overridable via env) keeps the Docker behaviour while letting `build-locally.sh` `cd` the right place first. See Q5 in this doc.
+- **`usage()` returns 2 everywhere**: harmonised the three `generate-*.sh` scripts. `generate-rust-tczs.sh` already returned 2; the other two implicitly returned 0 which made `exit $?` on the error path misleadingly signal success. Low-risk, matches the existing intent.
 
 ---
 
