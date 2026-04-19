@@ -162,10 +162,18 @@ main()
   RUST_VERSION="$2"
   HOME_TC="/home/tc"
   GIT_REPO_DIR="/home/code/tcl-core-rust-i586"
+  SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
   ensure_git_repo
   RESULT=$?
   if [ $RESULT != 0 ]; then
+    exit $RESULT
+  fi
+
+  "$SCRIPT_DIR/tce-load-build-requirements.sh"
+  RESULT=$?
+  if [ $RESULT != 0 ]; then
+    echo "Failed to load build requirements."
     exit $RESULT
   fi
 

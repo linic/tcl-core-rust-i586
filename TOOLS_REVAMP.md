@@ -84,9 +84,9 @@ Ordered lowest-risk first.
 
 ### Phase 2 — wire up a local build dependency installer (medium, safe)
 
-- [ ] New `tools/tce-load-build-requirements.sh` — loads at minimum `squashfs-tools.tcz`, `coreutils.tcz`, `git.tcz`, `curl.tcz` (pattern mirrored from `rust-i586/tools/tce-load-build-requirements.sh`).
-- [ ] `build-locally.sh`: call `tce-load-build-requirements.sh` from `main()` after arg parsing, before any download / compile step.
-- [ ] Commit Phase 2.
+- [x] New `tools/tce-load-build-requirements.sh` — `tce-load -wi squashfs-tools.tcz coreutils.tcz git.tcz curl.tcz`. Deliberately *not* the full rust-i586 list, because build-locally.sh repackages a prebuilt toolchain tar rather than compiling rust from source.
+- [x] `build-locally.sh`: call it from `main()` after `ensure_git_repo`, before any `get_*` / `compile_*` step. Resolves the tce-load script via `SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"` so `build-locally.sh` can be invoked from any cwd.
+- [x] Commit Phase 2.
 
 ### Phase 3 — smoke-test what can be validated from this workspace
 
@@ -105,6 +105,7 @@ Ordered lowest-risk first.
 
 - `2026-04-18` — Wrote this journal, read the four files in the commit and the reference `rust-i586/tools/build-locally.sh`, listed the bugs, set up the phased plan. No code changes yet; this is the handshake commit.
 - `2026-04-18` — Phase 1: fixed the 17-ish bugs from the journal. `build-locally.sh` now parses args correctly, uses the right variable names, has a working `clone()` fallback, and ends with `main "$@"`. All three `generate-*.sh` scripts now actually invoke their `compile()` function (they were no-ops before). Usage paths all exit 2 consistently. Smoke-tested with 0/1/3 args on `build-locally.sh` and bad-input on each `generate-*.sh` — all print usage and exit 2. `sh -n` passes on all four files.
+- `2026-04-18` — Phase 2: added `tools/tce-load-build-requirements.sh` that loads `squashfs-tools coreutils git curl`. `build-locally.sh` `main()` now invokes it after `ensure_git_repo` and bails on failure. Resolved the sibling script path via `SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"` so the script is cwd-independent. `sh -n` passes.
 
 ---
 
@@ -148,6 +149,11 @@ rust-i586's `build-locally.sh` calls `get-certificate.sh / compare-certificate.s
 - **Dropped the `cd "$OPENSSL_COMPILE_DIR"` line** in `generate-openssl-tcz.sh` `main()` rather than renaming it to `$OPENSSL_TCZ_COMPILE_DIR`. `compile()` uses absolute paths (`$OPENSSL_VERSION_TCZ_PATH`, `$OPENSSL_INFO_FILES_PATH`) so cwd doesn't matter. Deleting is the smaller change. Reversible via `git revert`.
 - **`RESOURCE_FILES_DIRECTORY="${RESOURCE_FILES_DIRECTORY:-.}"` default** in `generate-tcz-companions.sh` `main()`: the script was never setting this, relying on the Dockerfile's implicit `WORKDIR /home/tc` + the fact that `.` resolves relative to cwd. Making it an explicit default (overridable via env) keeps the Docker behaviour while letting `build-locally.sh` `cd` the right place first. See Q5 in this doc.
 - **`usage()` returns 2 everywhere**: harmonised the three `generate-*.sh` scripts. `generate-rust-tczs.sh` already returned 2; the other two implicitly returned 0 which made `exit $?` on the error path misleadingly signal success. Low-risk, matches the existing intent.
+
+**Phase 2**
+
+- **Minimum tce-load set** (`squashfs-tools coreutils git curl`) rather than rust-i586's much larger set. Scope rationale: our build-locally.sh assembles .tcz files from prebuilt binaries; it never invokes a C/C++ toolchain. If the end-to-end run on the 560Z turns out to need something else (e.g. a specific tar with xz support), add it then. See Q3 in this doc.
+- **`SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"`** to locate the sibling `tce-load-build-requirements.sh`: makes `build-locally.sh` invokable from any cwd (matches the `make build-locally` target, which runs from the repo root). No environment assumptions beyond POSIX sh.
 
 ---
 
