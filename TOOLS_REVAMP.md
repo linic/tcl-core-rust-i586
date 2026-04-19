@@ -90,9 +90,9 @@ Ordered lowest-risk first.
 
 ### Phase 3 — smoke-test what can be validated from this workspace
 
-- [ ] `sh -n` on every touched script.
-- [ ] Run `build-locally.sh` with 0 / 1 / 3 args and confirm the usage/error path is clean.
-- [ ] Document in this journal that the full end-to-end run on a booted 560Z is **not** validated from here — that is linic's follow-up.
+- [x] `sh -n` on every touched script.
+- [x] Run `build-locally.sh` with 0 / 1 / 3 args and confirm the usage/error path is clean.
+- [x] Document in this journal that the full end-to-end run on a booted 560Z is **not** validated from here — that is linic's follow-up.
 
 ### Phase 4 — out of scope for this session (but noted)
 
@@ -106,6 +106,7 @@ Ordered lowest-risk first.
 - `2026-04-18` — Wrote this journal, read the four files in the commit and the reference `rust-i586/tools/build-locally.sh`, listed the bugs, set up the phased plan. No code changes yet; this is the handshake commit.
 - `2026-04-18` — Phase 1: fixed the 17-ish bugs from the journal. `build-locally.sh` now parses args correctly, uses the right variable names, has a working `clone()` fallback, and ends with `main "$@"`. All three `generate-*.sh` scripts now actually invoke their `compile()` function (they were no-ops before). Usage paths all exit 2 consistently. Smoke-tested with 0/1/3 args on `build-locally.sh` and bad-input on each `generate-*.sh` — all print usage and exit 2. `sh -n` passes on all four files.
 - `2026-04-18` — Phase 2: added `tools/tce-load-build-requirements.sh` that loads `squashfs-tools coreutils git curl`. `build-locally.sh` `main()` now invokes it after `ensure_git_repo` and bails on failure. Resolved the sibling script path via `SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"` so the script is cwd-independent. `sh -n` passes.
+- `2026-04-19` — Phase 3: re-ran `sh -n` on all five touched scripts (`build-locally.sh`, `tce-load-build-requirements.sh`, `generate-openssl-tcz.sh`, `generate-rust-tczs.sh`, `generate-tcz-companions.sh`) — all clean. Re-ran `build-locally.sh` with 0 / 1 / 3 args — all three print usage and exit 2. Re-ran each `generate-*.sh` with no args — all three print usage and exit 2. **The full end-to-end run on a booted 560Z is NOT validated from this workspace.** No docker, no mksquashfs, no TC extensions here. That validation is linic's follow-up.
 
 ---
 
