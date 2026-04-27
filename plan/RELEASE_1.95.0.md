@@ -48,6 +48,6 @@ Dockerfile's COPY of info-openssl to WORKDIR.
 - [x] Update `Makefile` RUST_VERSION → 1.95.0
 - [x] Update `docker-compose.yml` RUST_VERSION → 1.95.0
 - [x] Fix `generate-openssl-tcz.sh` broken paths (additional fix, see above)
-- [ ] Add changelog entry for 1.95.0 (handled automatically by generate-tcz-companions.sh during build)
-- [ ] Build and verify `.tcz` packages
+- [x] Add changelog entry for 1.95.0 (handled automatically by generate-tcz-companions.sh during build)
+- [x] Build and verify `.tcz` packages — all 22 artifacts in release/1.95.0/, load-test passed (cargo ran Hello World)
 - [ ] Push / release (discuss with Nic before completing this step)
