@@ -107,6 +107,7 @@ Ordered lowest-risk first.
 - `2026-04-18` — Phase 1: fixed the 17-ish bugs from the journal. `build-locally.sh` now parses args correctly, uses the right variable names, has a working `clone()` fallback, and ends with `main "$@"`. All three `generate-*.sh` scripts now actually invoke their `compile()` function (they were no-ops before). Usage paths all exit 2 consistently. Smoke-tested with 0/1/3 args on `build-locally.sh` and bad-input on each `generate-*.sh` — all print usage and exit 2. `sh -n` passes on all four files.
 - `2026-04-18` — Phase 2: added `tools/tce-load-build-requirements.sh` that loads `squashfs-tools coreutils git curl`. `build-locally.sh` `main()` now invokes it after `ensure_git_repo` and bails on failure. Resolved the sibling script path via `SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"` so the script is cwd-independent. `sh -n` passes.
 - `2026-04-19` — Phase 3: re-ran `sh -n` on all five touched scripts (`build-locally.sh`, `tce-load-build-requirements.sh`, `generate-openssl-tcz.sh`, `generate-rust-tczs.sh`, `generate-tcz-companions.sh`) — all clean. Re-ran `build-locally.sh` with 0 / 1 / 3 args — all three print usage and exit 2. Re-ran each `generate-*.sh` with no args — all three print usage and exit 2. **The full end-to-end run on a booted 560Z is NOT validated from this workspace.** No docker, no mksquashfs, no TC extensions here. That validation is linic's follow-up.
+- `2026-04-27` — Release 1.95.0 prep revealed that the b38dbc1 rewrite of `generate-openssl-tcz.sh` introduced broken paths incompatible with the Docker layout. The script computed `OPENSSL_SQUASHFS_SOURCE_PATH=$HOME_TC/openssl-$OPENSSL_VERSION-i586_tcz/squashfs-root` but the Dockerfile stages libs at `$HOME_TC/openssl/usr/lib/`. Rewrote the script back to the pre-b38dbc1 design (squash from `$HOME_TC/openssl`, output TCZ to `$HOME_TC`, use `RESOURCE_FILES_DIRECTORY` for info-openssl path) with the usage/compile/main function structure. Also noted (but did NOT fix yet) that `build-locally.sh compile_openssl_tcz()` stages libs at the wrong path for the local case — see Open Items. `generate-rust-tczs.sh` local path also has an issue (see Open Items), but the Docker path works.
 
 ---
 
@@ -155,6 +156,19 @@ rust-i586's `build-locally.sh` calls `get-certificate.sh / compare-certificate.s
 
 - **Minimum tce-load set** (`squashfs-tools coreutils git curl`) rather than rust-i586's much larger set. Scope rationale: our build-locally.sh assembles .tcz files from prebuilt binaries; it never invokes a C/C++ toolchain. If the end-to-end run on the 560Z turns out to need something else (e.g. a specific tar with xz support), add it then. See Q3 in this doc.
 - **`SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"`** to locate the sibling `tce-load-build-requirements.sh`: makes `build-locally.sh` invokable from any cwd (matches the `make build-locally` target, which runs from the repo root). No environment assumptions beyond POSIX sh.
+
+**Release 1.95.0 prep (2026-04-27)**
+
+- **`generate-openssl-tcz.sh` rewrite**: the b38dbc1 rewrite introduced `OPENSSL_SQUASHFS_SOURCE_PATH="$OPENSSL_TCZ_COMPILE_DIR/squashfs-root"` and `OPENSSL_VERSION_TCZ_PATH="$OPENSSL_TCZ_RELEASE_PATH/$OPENSSL_VERSION_TCZ"` which point to directories that never exist in Docker. The working design (at 4244d68) uses `$HOME_TC/openssl` as the squashfs source (matching the Dockerfile ENV) and outputs to cwd after `cd $HOME_TC`. Reverted to that design with the function structure kept. The env-var conditional `${OPENSSL_SQUASHFS_SOURCE_PATH:-$HOME_TC/openssl}` allows the local path to override if needed.
+
+---
+
+## Open items / follow-ups
+
+These were found during release 1.95.0 prep. Not blocking the Docker build but need fixing before `build-locally.sh` can be used on the 560Z.
+
+- **`build-locally.sh compile_openssl_tcz()`**: stages libs at `$OPENSSL_TCZ_COMPILE_DIR/usr/lib/` but `generate-openssl-tcz.sh` (after the fix) expects them at `$HOME_TC/openssl/usr/lib/`. Also copies `info-openssl` to `$OPENSSL_TCZ_COMPILE_DIR` but the script expects it at `$HOME_TC/info-openssl`. Both paths need to change to match the Docker layout (`$HOME_TC/openssl/` and `$HOME_TC/info-openssl/`).
+- **`build-locally.sh compile_rust_tcz()`**: `mkdir -pv "$RUST_TCZ_COMPILE_DIR"` + `cd` into it means `tar -xf "$RUST_TOOLCHAIN_TAR"` looks for the tar in `$RUST_TCZ_COMPILE_DIR`, but the tar was downloaded to `$RUST_DEPENDENCY_PATH`. The Docker build works because `cd "$RUST_TCZ_COMPILE_DIR"` fails silently (dir doesn't exist yet) and cwd stays at `$HOME_TC` where Docker placed the tar. The local path needs either a copy of the tar to cwd or a full-path tar extraction.
 
 ---
 

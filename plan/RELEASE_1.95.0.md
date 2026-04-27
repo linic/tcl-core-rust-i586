@@ -28,12 +28,26 @@ is available locally or pull it.
 
 The changelog is current through `1.93.0 → 1.93.1` (2026/03/06). Add an entry for `→ 1.95.0`.
 
+## Additional fix found during prep
+
+**`generate-openssl-tcz.sh` broken paths** (pre-existing since b38dbc1 rewrite):
+The b38dbc1 rewrite set `OPENSSL_SQUASHFS_SOURCE_PATH` to a non-existent
+`$HOME_TC/openssl-$VERSION-i586_tcz/squashfs-root` and output the TCZ to a
+`-release` subdirectory that is never created in Docker. The Dockerfile actually
+stages libs at `$HOME_TC/openssl/usr/lib/` and expects the TCZ at `$HOME_TC/`.
+Rewrote the script back to the 4244d68 design (squash from `$HOME_TC/openssl`,
+output TCZ + companions to `$HOME_TC`). RESOURCE_FILES_DIRECTORY defaults to `.`
+which resolves to `$HOME_TC` after the internal `cd "$HOME_TC"` — matching the
+Dockerfile's COPY of info-openssl to WORKDIR.
+
 ## Status
 
-- [ ] Check for `linichotmailca/rust-i586:1.95.0` locally (handled in `rust-i586` repo)
-- [ ] Fix double `main "$@"` call in `generate-rust-tczs.sh`
-- [ ] Add USER root regression-fix block to Dockerfile
-- [ ] Update `Makefile` RUST_VERSION → 1.95.0
-- [ ] Add changelog entry for 1.95.0
+- [x] Check for `linichotmailca/rust-i586:1.95.0` locally — confirmed present
+- [x] Fix double `main "$@"` call in `generate-rust-tczs.sh`
+- [x] Add USER root regression-fix block to Dockerfile
+- [x] Update `Makefile` RUST_VERSION → 1.95.0
+- [x] Update `docker-compose.yml` RUST_VERSION → 1.95.0
+- [x] Fix `generate-openssl-tcz.sh` broken paths (additional fix, see above)
+- [ ] Add changelog entry for 1.95.0 (handled automatically by generate-tcz-companions.sh during build)
 - [ ] Build and verify `.tcz` packages
 - [ ] Push / release (discuss with Nic before completing this step)

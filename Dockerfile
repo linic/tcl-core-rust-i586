@@ -20,6 +20,14 @@ ARG OPENSSL_VERSION
 ARG RUST_VERSION
 ARG TCL_VERSION
 FROM linichotmailca/tcl-core-x86:$TCL_VERSION-$ARCHITECTURE AS final
+# The 17.x-x86 floating tag introduced regressions: /tmp lost world-write
+# permission, sudo lost SUID bit, /home/tc ownership changed to root.
+USER root
+RUN chmod 1777 /tmp \
+    && chown -R tc:staff /tmp/tce /tmp/tcloop \
+    && chmod u+s /usr/bin/sudo \
+    && chown tc:staff /home/tc
+USER tc
 # Defining arguments from which environment variables will be generated.
 ARG ARCHITECTURE
 ARG OPENSSL_LIB_SUFFIX
