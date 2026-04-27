@@ -1,11 +1,7 @@
 # Plan: Release 1.95.0
 
-Scouted from `rust-i586` session on 2026-04-26. Pick up here when `linichotmailca/rust-i586:1.95.0`
-has been pushed to Docker Hub.
-
-## Pre-requisites
-
-- `linichotmailca/rust-i586:1.95.0` pushed to Docker Hub ← **must be done first**
+Scouted from `rust-i586` session on 2026-04-26. Check if `linichotmailca/rust-i586:1.95.0`
+is available locally or pull it.
 
 ## Known issues to fix before building
 
@@ -34,10 +30,10 @@ The changelog is current through `1.93.0 → 1.93.1` (2026/03/06). Add an entry 
 
 ## Status
 
-- [ ] Push `linichotmailca/rust-i586:1.95.0` to Docker Hub (handled in `rust-i586` repo)
+- [ ] Check for `linichotmailca/rust-i586:1.95.0` locally (handled in `rust-i586` repo)
 - [ ] Fix double `main "$@"` call in `generate-rust-tczs.sh`
 - [ ] Add USER root regression-fix block to Dockerfile
 - [ ] Update `Makefile` RUST_VERSION → 1.95.0
 - [ ] Add changelog entry for 1.95.0
 - [ ] Build and verify `.tcz` packages
-- [ ] Push / release
+- [ ] Push / release (discuss with Nic before completing this step)
